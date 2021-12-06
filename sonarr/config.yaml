@@ -22,8 +22,8 @@ map:
   - share:rw
   - ssl:ro
 environment:
-  PUID: 0
-  PGID: 0
+  PUID: "0"
+  PGID: "0"
 options:
   networkdisks: "<//SERVER/SHARE>"
   cifsusername: "<username>"
