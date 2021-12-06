@@ -30,6 +30,5 @@ RUN \
     && ln -s /usr/lib/bashio/bashio /usr/bin/bashio \
     && chmod -R 555 /usr/lib/bashio \
     \
-    && apk del --no-cache --purge \
     && rm -f -r \
         /tmp/*
