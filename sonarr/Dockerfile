@@ -1,7 +1,12 @@
-ARG BUILD_FROM=ghcr.io/linuxserver/sonarr:amd64-0.6.1397
+ARG BUILD_FROM=ghcr.io/linuxserver/sonarr:amd64-3.0.6
 
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM}
+
+# Version
+ARG \
+    BASHIO_VERSION=0.14.3 \
+    TEMPIO_VERSION=2021.09.0
 
 # Environment variables
 ENV \
@@ -12,6 +17,10 @@ ENV \
 # Copy root filesystem
 COPY rootfs /
 
+# Base system
+WORKDIR /usr/src
+ARG BUILD_ARCH
+
 # Set shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -19,16 +28,42 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN \
     set -o pipefail \
     \
+    && apk add --no-cache --virtual .build-dependencies \
+        tar=1.34-r0 \
+    \
+    && apk add --no-cache \
+        libcrypto1.1=1.1.1l-r0 \
+        libssl1.1=1.1.1l-r0 \
+        musl-utils=1.2.2-r3 \
+        musl=1.2.2-r3 \
+    \
+    && apk add --no-cache \
+        bash=5.1.4-r0 \
+        curl=7.79.1-r0 \
+        jq=1.6-r1 \
+        tzdata=2021e-r0 \
+    \
+    && S6_ARCH="${BUILD_ARCH}" \
+    && if [ "${BUILD_ARCH}" = "i386" ]; then S6_ARCH="x86"; fi \
+    && if [ "${BUILD_ARCH}" = "armv7" ]; then S6_ARCH="arm"; fi \
+    \
+    && mkdir -p /etc/fix-attrs.d \
+    && mkdir -p /etc/services.d \
+    \
     && curl -J -L -o /tmp/bashio.tar.gz \
-        "https://github.com/hassio-addons/bashio/archive/v0.13.0.tar.gz" \
+        "https://github.com/hassio-addons/bashio/archive/v${BASHIO_VERSION}.tar.gz" \
     && mkdir /tmp/bashio \
     && tar zxvf \
         /tmp/bashio.tar.gz \
         --strip 1 -C /tmp/bashio \
     \
     && mv /tmp/bashio/lib /usr/lib/bashio \
-    && ln -s /usr/lib/bashio/bashio /usr/bin/bashio \
-    && chmod -R 555 /usr/lib/bashio \
+    && ln -sf /usr/lib/bashio/bashio /usr/bin/bashio \
     \
+    && curl -L -f -s -o /usr/bin/tempio \
+        "https://github.com/home-assistant/tempio/releases/download/${TEMPIO_VERSION}/tempio_${BUILD_ARCH}" \
+    && chmod a+x /usr/bin/tempio \
+    \
+    && apk del --no-cache --purge .build-dependencies \
     && rm -f -r \
         /tmp/*

@@ -4,7 +4,7 @@ version: dev
 slug: sonarr
 description: Sonarr is a PVR for usenet and bittorrent users.
 url: https://github.com/lbouriez/hassio-addons
-image: ghcr.io/evilmarty/hassio-sonarr
+image: ghcr.io/lbouriez/addon-sonarr/{arch}
 arch:
   - aarch64
   - amd64
@@ -17,6 +17,9 @@ ports:
 ports_description:
   8989/tcp: The port for the Sonarr webinterface
 full_access: true
+privileged:
+  - SYS_ADMIN
+  - DAC_READ_SEARCH
 map:
   - media:rw
   - share:rw
