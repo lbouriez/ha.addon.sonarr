@@ -25,7 +25,7 @@ environment:
   PUID: "0"
   PGID: "0"
 options:
-  networkdisks: 
+  networkdisks:
     - <//SERVER/SHARE>
   cifsusername: "<username>"
   cifspassword: "<password>"
