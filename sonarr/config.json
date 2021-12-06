@@ -5,11 +5,7 @@
   "description": "Sonarr is a PVR for usenet and bittorrent users.",
   "url": "https://github.com/lbouriez/hassio-addons",
   "image": "ghcr.io/evilmarty/hassio-sonarr",
-  "arch": [
-    "aarch64",
-    "amd64",
-    "armv7"
-  ],
+  "arch": ["aarch64", "amd64", "armv7"],
   "init": false,
   "services": [],
   "webui": "http://[HOST]:[PORT:8989]",
@@ -20,11 +16,7 @@
   "ports_description": {
     "8989/tcp": "The port for the Sonarr webinterface"
   },
-  "map": [
-    "share:rw",
-    "ssl:ro",
-    "media:rw"
-  ],
+  "map": ["share:rw", "ssl:ro", "media:rw"],
   "environment": {
     "PUID": "0",
     "PGID": "0"
