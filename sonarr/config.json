@@ -16,6 +16,7 @@
   "ports_description": {
     "8989/tcp": "The port for the Sonarr webinterface"
   },
+  "hassio_api": true,
   "map": ["share:rw", "ssl:ro", "media:rw"],
   "environment": {
     "PUID": "0",
