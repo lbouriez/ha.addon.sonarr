@@ -25,27 +25,17 @@ ARG BUILD_ARCH
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Setup base system
+# hadolint ignore=DL3008
 RUN \
     set -o pipefail \
     \
-    && apk add --no-cache --virtual .build-dependencies \
-        tar=1.34-r0 \
-    \
-    && apk add --no-cache \
-        libcrypto1.1=1.1.1l-r0 \
-        libssl1.1=1.1.1l-r0 \
-        musl-utils=1.2.2-r3 \
-        musl=1.2.2-r3 \
-    \
-    && apk add --no-cache \
-        bash=5.1.4-r0 \
-        curl=7.79.1-r0 \
-        jq=1.6-r1 \
-        tzdata=2021e-r0 \
-    \
-    && S6_ARCH="${BUILD_ARCH}" \
-    && if [ "${BUILD_ARCH}" = "i386" ]; then S6_ARCH="x86"; fi \
-    && if [ "${BUILD_ARCH}" = "armv7" ]; then S6_ARCH="arm"; fi \
+    set -x \
+    && apt-get update && apt-get install -y --no-install-recommends \
+        bash \
+        jq \
+        tzdata \
+        curl \
+        ca-certificates \
     \
     && mkdir -p /etc/fix-attrs.d \
     && mkdir -p /etc/services.d \
@@ -64,6 +54,5 @@ RUN \
         "https://github.com/home-assistant/tempio/releases/download/${TEMPIO_VERSION}/tempio_${BUILD_ARCH}" \
     && chmod a+x /usr/bin/tempio \
     \
-    && apk del --no-cache --purge .build-dependencies \
-    && rm -f -r \
-        /tmp/*
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /usr/src/*
